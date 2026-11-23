@@ -12,8 +12,9 @@ export default class LoadBalancer {
     //   activeProgress: 0.25 // Progreso de 0 a 1 (0 si está libre)
     // }
     // Los datos son de solo lectura y se actualizan durante la simulación.
-    this.servers = Object.freeze([...servers]);
+    this.servers = servers;
     this.siguiente = 0;
+    this.acumulado = 0
   }
 
   async onRequestArrival(request, sendToServer) {
@@ -25,17 +26,31 @@ export default class LoadBalancer {
     // }
     let total = this.servers.length;
 
-
     if (this.siguiente >= total){
       this.siguiente = 0;
     }
-    console.log(total);
 
+    let acumulado = 0
     const server = this.servers[this.siguiente];
-    this.siguiente = this.siguiente + 1;
+    console.log("Mandando a:" + server.id);
+    console.log("Peso" + server.power);
+
+
+    if (this.acumulado < server.power - 1){
+      this.acumulado = this.acumulado + 1;
+      console.log("Mandando a:" + server.id);
+      console.log("Peso" + server.power);
+      console.log("Acumulado" + this.acumulado);
+    }
+    else{
+      this.siguiente = this.siguiente + 1;
+      console.log("Sumo server");
+      this.acumulado = 0;
+      console.log("Siguiente" + this.siguiente);
+    }
+    
 
     // Envía la petición al servidor y devuelve su respuesta al cliente.
     return sendToServer(server.id);
-    console.log("Enviado");
   }
 }
