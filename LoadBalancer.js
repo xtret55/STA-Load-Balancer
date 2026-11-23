@@ -27,11 +27,11 @@ export default class LoadBalancer {
     let extra = 0;
     let conexiones = [];
     for (const i in this.servers){
-      //if (this.servers[i].activeRequest != null){
-        //extra = 1;
-      //}
-      conexiones = conexiones + this.servers[i].queuedRequests.length;//+extra
-      //extra = 0;
+      if (this.servers[i].activeRequest != null){
+        extra = 1;
+      }
+      conexiones = conexiones + (this.servers[i].queuedRequests.length + extra);
+      extra = 0;
     }
 
     let minimo = Infinity;
